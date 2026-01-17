@@ -253,8 +253,7 @@ export default function TierPage() {
     }, []);
 
     const activeAnime = activeId ? animeById.get(activeId) : null;
-    const { setNodeRef: setDesktopPoolRef, isOver: isDesktopPoolOver } = useDroppable({ id: 'POOL_DESKTOP' });
-    const { setNodeRef: setMobilePoolRef, isOver: isMobilePoolOver } = useDroppable({ id: 'POOL_MOBILE' });
+    const { setNodeRef: setMobilePoolRef } = useDroppable({ id: 'POOL_MOBILE' });
 
     return (
         <div className="min-h-screen bg-neutral-50/50 pb-40 md:pb-20">
@@ -287,7 +286,7 @@ export default function TierPage() {
             </div>
 
             {/* 메인 레이아웃: 데스크탑 3단 / 모바일 1단 */}
-            <div className="mx-auto grid max-w-[1600px] gap-6 px-4 py-6 lg:grid-cols-[240px_200px_1fr] lg:px-6">
+            <div className="mx-auto grid max-w-[1600px] gap-6 px-4 py-6 lg:grid-cols-[460px_1fr] lg:px-6">
 
                 {/* 1. 데스크탑 전용: 좌측 검색 (모바일엔 숨김) */}
                 <div className="hidden lg:block space-y-6">
@@ -299,24 +298,6 @@ export default function TierPage() {
 
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd} measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}>
 
-                    {/* 2. 데스크탑 전용: 중앙 대기열 (모바일엔 숨김 -> 하단 Dock으로 대체) */}
-                    <div className="hidden lg:block relative">
-                        <div className=" top-32 space-y-3">
-                            <h3 className="ml-1 text-xs font-bold uppercase tracking-wider text-neutral-500">Waiting</h3>
-                            <div ref={setDesktopPoolRef} className={`min-h-[400px] w-full rounded-2xl border-2 border-dashed transition-colors ${isDesktopPoolOver ? "border-black/20 bg-black/5" : "border-neutral-200 bg-white"}`}>
-                                <SortableContext items={state.pool} strategy={rectSortingStrategy}>
-                                    <div className="flex flex-wrap content-start gap-2 p-3">
-                                        {state.pool.map(id => {
-                                            const anime = animeById.get(id);
-                                            if(!anime) return null;
-                                            return <SortableItem key={id} id={id} anime={anime} note={noteById[id]} onEdit={setEditingId} />;
-                                        })}
-                                    </div>
-                                </SortableContext>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* 3. 공통: 티어 보드 */}
                     <div className="space-y-3 md:space-y-4">
                         {TIERS.map(t => (
@@ -325,7 +306,7 @@ export default function TierPage() {
                     </div>
 
                     {/* ✨ 4. 모바일 전용: 하단 고정 Dock (대기열) */}
-                    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-200 bg-white/90 backdrop-blur-xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
+                    <div className=" fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-200 bg-white/90 backdrop-blur-xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
                         <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-100">
                             <span className="text-xs font-bold text-neutral-500">대기 목록 ({state.pool.length})</span>
                             <span className="text-[10px] text-neutral-400">가로로 스크롤하세요 →</span>
