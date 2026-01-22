@@ -3,6 +3,7 @@ export type Anime = {
     title: string;
     year?: number;
     genres?: string[];
+    imageUrl?: string;
 };
 
 export type Tier = "S" | "A" | "B" | "C" | "D";
