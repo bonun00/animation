@@ -79,7 +79,7 @@ export default function SearchPage() {
                             <div key={anime.id} className="group cursor-pointer">
                                 <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-neutral-100 shadow-sm transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
                                     <img
-                                        src={anime.imageUrl || "/placeholder.png"} // 이미지가 없을 때 대비
+                                        src={anime.imageUrl } // 이미지가 없을 때 대비
                                         alt={anime.title}
                                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         loading="lazy"

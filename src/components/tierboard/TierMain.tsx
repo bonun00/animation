@@ -72,19 +72,25 @@ function AnimeCard({
         ${isOverlay ? "scale-105 shadow-2xl ring-4 ring-black/10 z-50" : "shadow-sm border border-neutral-200"}
       `}
         >
-            <div className="flex h-full w-full flex-col items-center justify-center bg-neutral-100 p-1 text-center group-hover:bg-neutral-800 transition-colors">
-        <span className="line-clamp-2 text-[8px] md:text-[10px] font-bold text-neutral-500 group-hover:text-white leading-tight">
-          {anime.title}
-        </span>
+            <div
+                className="flex h-full w-full flex-col items-center justify-center bg-neutral-100 p-1 text-center group-hover:bg-neutral-800 transition-colors">
+                <div
+                    className="flex h-full w-full items-center justify-center bg-neutral-200 group-hover:bg-neutral-800 transition-colors">
+                    <img
+                        src={anime.imageUrl}
+                        alt={anime.title}
+                        className="h-full w-full object-cover"
+                    />
+                </div>
             </div>
             {note?.trim() && (
-                <div className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 ring-1 ring-white" />
+                <div className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 ring-1 ring-white"/>
             )}
         </div>
     );
 }
 
-function SortableItem({ id, anime, note, onEdit }: any) {
+function SortableItem({id, anime, note, onEdit}: any) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
     const style = {

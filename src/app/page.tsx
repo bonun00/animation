@@ -213,15 +213,22 @@ export default function HomePage() {
                             onClick={() => setSelectedAnime(anime)}
                             className="group cursor-pointer"
                         >
-                            <div className="relative mb-3 aspect-[2/3] overflow-hidden rounded-xl bg-neutral-100 shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
+                            <div
+                                className="relative mb-3 aspect-[2/3] overflow-hidden rounded-xl bg-neutral-100 shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
                                 {/* 이미지 플레이스홀더 */}
-                                <div className="flex h-full w-full items-center justify-center bg-neutral-200 text-neutral-400 group-hover:bg-neutral-800 group-hover:text-white transition-colors">
-                                    <span className="font-bold text-xs">{anime.title}</span>
+                                <div
+                                    className="flex h-full w-full items-center justify-center bg-neutral-200 group-hover:bg-neutral-800 transition-colors">
+                                    <img
+                                        src={anime.imageUrl}
+                                        alt={anime.title}
+                                        className="h-full w-full object-cover"
+                                    />
                                 </div>
-
                                 {/* 호버 시 리뷰 보기 버튼 느낌 */}
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover:opacity-100">
-                    <span className="rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-xs font-bold text-white border border-white/30">
+                                <div
+                                    className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover:opacity-100">
+                    <span
+                        className="rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-xs font-bold text-white border border-white/30">
                         상세보기
                     </span>
                                 </div>
