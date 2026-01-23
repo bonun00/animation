@@ -66,25 +66,35 @@ function AnimeCard({
         <div
             onDoubleClick={onDoubleClick}
             className={`
-        group relative cursor-grab overflow-hidden rounded-lg bg-white transition-all
-        /* 모바일: w-16 (작게), 데스크탑: w-24 (크게) */
-        w-16 md:w-24 aspect-[2/3]
-        ${isOverlay ? "scale-105 shadow-2xl ring-4 ring-black/10 z-50" : "shadow-sm border border-neutral-200"}
-      `}
+                group relative flex flex-col cursor-grab overflow-hidden rounded-lg bg-white transition-all
+                /* 모바일: w-16, 데스크탑: w-24 */
+                w-16 md:w-24 aspect-[2/3]
+                ${isOverlay ? "scale-105 shadow-2xl ring-4 ring-black/10 z-50" : "shadow-sm border border-neutral-200"}
+            `}
         >
-            <div
-                className="flex h-full w-full flex-col items-center justify-center bg-neutral-100 p-1 text-center group-hover:bg-neutral-800 transition-colors">
-                <div
-                    className="flex h-full w-full items-center justify-center bg-neutral-200 group-hover:bg-neutral-800 transition-colors">
+            <div className="relative flex-1 w-full overflow-hidden bg-neutral-200">
+                {anime.imageUrl ? (
                     <img
                         src={anime.imageUrl}
                         alt={anime.title}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        draggable={false}
                     />
-                </div>
+                ) : (
+                    <div className="flex h-full w-full items-center justify-center text-neutral-400">?</div>
+                )}
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
             </div>
+
+            <div className="flex h-8 shrink-0 items-center justify-center bg-white px-1 py-0.5 text-center">
+                <span className="line-clamp-2 text-[9px] md:text-[10px] font-bold leading-tight text-neutral-700 group-hover:text-rose-500 transition-colors">
+                    {anime.title}
+                </span>
+            </div>
+
             {note?.trim() && (
-                <div className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 ring-1 ring-white"/>
+                <div className="absolute right-1 top-1 z-10 h-2 w-2 rounded-full bg-rose-500 ring-1 ring-white shadow-sm" />
             )}
         </div>
     );
@@ -176,11 +186,8 @@ export default function TierPage() {
     const [activeId, setActiveId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
 
-    // 모바일: 검색창 열고 닫기
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-    // ✨ 센서 설정 (모바일 터치 최적화)
-    // 터치 후 250ms 동안 5px 이상 움직이지 않아야 '드래그'로 인식 (스크롤과 구분)
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
         useSensor(TouchSensor, {
@@ -188,7 +195,6 @@ export default function TierPage() {
         })
     );
 
-    // Load/Save Logic (생략 - 이전과 동일)
     useEffect(() => {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
@@ -197,7 +203,6 @@ export default function TierPage() {
     }, []);
     useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, noteById })); }, [state, noteById]);
 
-    // Actions (addToPool, resetAll 등 이전과 동일)
     const addToPool = (id: string) => {
         setState((prev) => {
             const all = [prev.pool, ...Object.values(prev.tiers)].flat();
@@ -207,7 +212,6 @@ export default function TierPage() {
     };
     const resetAll = () => { if(confirm("초기화?")) { setState(createEmptyState()); setNoteById({}); } };
 
-    // DnD Handlers (handleDragStart, handleDragEnd 이전과 동일)
     const handleDragStart = (e: DragStartEvent) => setActiveId(String(e.active.id));
     const handleDragEnd = (e: DragEndEvent) => {
         const { active, over } = e;
@@ -263,14 +267,12 @@ export default function TierPage() {
 
     return (
         <div className="min-h-screen bg-neutral-50/50 pb-40 md:pb-20">
-            {/* pb-40: 모바일 하단 Dock 때문에 여백 많이 줌 */}
 
-            {/* 상단 툴바 */}
+
             <div className=" top-16 z-30 border-b border-neutral-200 bg-white/80 backdrop-blur-md">
                 <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 md:px-6 md:py-4">
                     <h2 className="text-sm md:text-base font-bold text-neutral-800">새 티어리스트</h2>
                     <div className="flex gap-2">
-                        {/* 모바일에서만 보이는 검색 토글 버튼 */}
                         <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
                             className="lg:hidden rounded-lg bg-neutral-100 px-3 py-1.5 text-xs font-bold"
@@ -283,7 +285,6 @@ export default function TierPage() {
                     </div>
                 </div>
 
-                {/* 모바일용 검색창 (토글됨) */}
                 {isSearchOpen && (
                     <div className="border-t bg-white p-4 lg:hidden animate-in slide-in-from-top-2">
                         <AnimeSearch animeList={ANIME_LIST} selectedIds={new Set([state.pool, ...Object.values(state.tiers)].flat())} onAdd={(id) => { addToPool(id); setIsSearchOpen(false); }} />
@@ -291,10 +292,8 @@ export default function TierPage() {
                 )}
             </div>
 
-            {/* 메인 레이아웃: 데스크탑 3단 / 모바일 1단 */}
             <div className="mx-auto grid max-w-[1600px] gap-6 px-4 py-6 lg:grid-cols-[460px_1fr] lg:px-6">
 
-                {/* 1. 데스크탑 전용: 좌측 검색 (모바일엔 숨김) */}
                 <div className="hidden lg:block space-y-6">
                     <div className=" top-32 rounded-2xl border border-neutral-100 bg-white p-4 shadow-sm">
                         <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-500">Search</h3>
@@ -304,22 +303,26 @@ export default function TierPage() {
 
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd} measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}>
 
-                    {/* 3. 공통: 티어 보드 */}
                     <div className="space-y-3 md:space-y-4">
                         {TIERS.map(t => (
                             <TierRow key={t} tier={t} ids={state.tiers[t]} animeById={animeById} noteById={noteById} onEditNote={setEditingId} />
                         ))}
                     </div>
-
-                    {/* ✨ 4. 모바일 전용: 하단 고정 Dock (대기열) */}
-                    <div className=" fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-200 bg-white/90 backdrop-blur-xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
+                    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-200 bg-white/95 backdrop-blur-xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
                         <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-100">
                             <span className="text-xs font-bold text-neutral-500">대기 목록 ({state.pool.length})</span>
                             <span className="text-[10px] text-neutral-400">가로로 스크롤하세요 →</span>
                         </div>
 
-                        {/* 여기가 진짜 대기열 드롭존 */}
-                        <div ref={setMobilePoolRef} className="flex h-28 items-center gap-3 overflow-x-auto px-4 py-2 scrollbar-hide">
+                        <div
+                            ref={setMobilePoolRef}
+                            className="
+                    flex flex-nowrap items-center gap-3
+                    px-4 py-3
+                    overflow-x-auto overflow-y-hidden scrollbar-hide
+                    h-auto min-h-[120px] /* 높이 넉넉하게 확보 */
+                "
+                        >
                             <SortableContext items={state.pool} strategy={horizontalListSortingStrategy}>
                                 {state.pool.length === 0 ? (
                                     <div className="flex w-full justify-center text-xs text-neutral-400 py-4">
@@ -329,6 +332,7 @@ export default function TierPage() {
                                     state.pool.map(id => {
                                         const anime = animeById.get(id);
                                         if(!anime) return null;
+                                        // SortableItem 안에 AnimeCard가 들어있습니다.
                                         return <SortableItem key={id} id={id} anime={anime} note={noteById[id]} onEdit={setEditingId} />;
                                     })
                                 )}
